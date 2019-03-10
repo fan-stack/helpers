@@ -13,7 +13,8 @@
     "express"
   ],
   "files": [
-    "/lib"
+    "/lib",
+    "image.png"
   ],
   "scripts": {
     "commit": "git-cz",

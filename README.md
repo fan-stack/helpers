@@ -7,7 +7,25 @@
 [![Dependency Status](https://david-dm.org/fan-stack/helpers.svg)](https://david-dm.org/fan-stack/helpers)
 [![devDependency Status](https://david-dm.org/fan-stack/helpers/dev-status.svg)](https://david-dm.org/fan-stack/helpers?type=dev)
 
+[![image.png](image.png)](https://github.com/pfa-stack/helpers)
+
 # How to use it
+
+## How to install
+
+### Yarn
+
+`yarn add @fan-stack/helpers`
+
+### Npm
+
+`npm i @fan-stack/helpers`
+
+### Pnpm
+
+`pnpm i @fan-stack/helpers`
+
+## Single Function
 
 Replace NestJS main.ts file with the following
 
@@ -19,7 +37,7 @@ import { AppModule } from './app.module';
 export const api = https.onRequest(nestToFirebase(AppModule));
 ```
 
-If you run `firebase serve --only functions` you will see the function is up and running.
+If you run `firebase serve --only functions`(after building the project) you will see the function is up and running.
 
 ## Multiple functions
 
@@ -55,7 +73,7 @@ You will need to configure your project to work with Firebase before using this.
 
 For this case, the source of the functions is in the root folder, if you have your NestJS project in a sub-folder, change the `source` property to the respective subfolder.
 
-## Add a firebaserc file
+## Add a .firebaserc file
 
 ```json
 {
@@ -77,6 +95,18 @@ You will need `firebase-functions`, `firebase-admin`, and `firebase-tools`.
 
 ### Init your Firebase CLI
 
+Login with the CLI if you haven't logged in already by running `yarn firebase login` then run
+
 `yarn firebase use --add`
 
-This will ask you to select your project and then ask for the alias name to use, normally you can use `default` as the alias
+This will ask you to select your project and then ask for the alias name to use, normally you can use `default` as the alias, the project ID from the project you choose will be added to the `.firebaserc` file.
+
+## Emulate Firebase Functions
+
+If you plan to emulate the functions using the Firebase CLI, you may want to use the following trick:
+
+`yarn config set ignore-engines true`
+
+This will allow yarn to install the [Google Cloud Functions Emulator](https://github.com/GoogleCloudPlatform/cloud-functions-emulator) because that package supports only Node.js v6.11.5, the latest code already supports newer versions but it hasn't been released to NPM yet.
+
+Now you will need to remove your `node_modules` folder and run `yarn` again to install the dependencies including the emulator.
