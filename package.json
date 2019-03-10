@@ -1,0 +1,21 @@
+{
+  "name": "@fan-stack/helpers",
+  "version": "0.0.0-development",
+  "description": "Helpers to work with Firebase, Angular, and Nestjs",
+  "main": "index.js",
+  "repository": "git@github.com:fan-stack/helpers.git",
+  "author": "Emerson Jair <emerson.jair@forrestbin.com>",
+  "license": "MIT",
+  "scripts": {
+    "commit": "git-cz"
+  },
+  "devDependencies": {
+    "commitizen": "3.0.7",
+    "cz-conventional-changelog": "2.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

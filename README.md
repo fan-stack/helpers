@@ -1,1 +1,3 @@
-# helpers
+# FAN-Stack Helpers
+
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
