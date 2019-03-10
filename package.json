@@ -2,18 +2,38 @@
   "name": "@fan-stack/helpers",
   "version": "0.0.0-development",
   "description": "Helpers to work with Firebase, Angular, and Nestjs",
-  "main": "index.js",
+  "main": "lib/main.js",
   "repository": "git@github.com:fan-stack/helpers.git",
   "author": "Emerson Jair <emerson.jair@forrestbin.com>",
   "license": "MIT",
+  "keywords": [
+    "firebase",
+    "nestjs",
+    "funtions",
+    "express"
+  ],
+  "files": [
+    "/lib"
+  ],
   "scripts": {
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "build": "tsc"
   },
   "devDependencies": {
+    "@types/express": "4.16.1",
     "commitizen": "3.0.7",
     "cz-conventional-changelog": "2.1.0",
     "tslint": "5.13.1",
-    "typescript": "3.3.3333"
+    "typescript": "3.3.3333",
+    "@nestjs/core": "5",
+    "@nestjs/common": "^5.0.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/core": "5",
+    "express": "4"
   },
   "config": {
     "commitizen": {
