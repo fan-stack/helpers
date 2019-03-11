@@ -8,27 +8,39 @@ type AuthHandler<T = any> = (
   context: EventContext
 ) => PromiseLike<T>;
 
-export function nestToAuthHandler(
+export function nestToAuthHandler<
+  TClass extends new (...args: any[]) => any,
+  TMethodName extends keyof InstanceType<TClass>
+>(
   nestModule: any,
-  nestController: any,
-  handlerMethod: string
+  nestControllerOrService: TClass,
+  handlerMethod: TMethodName
 ): AuthHandler {
   return async (user: auth.UserRecord, context: EventContext) => {
     const nestApp = await NestFactory.createApplicationContext(nestModule);
-    const controllerInstance = nestApp.get(nestController);
-    const handler: AuthHandler = controllerInstance[handlerMethod];
+    const nestInstance = nestApp.get<InstanceType<TClass>>(
+      nestControllerOrService
+    );
+    const handler: AuthHandler = nestInstance[handlerMethod];
 
-    return handler.call(controllerInstance, user, context);
+    return handler.call(nestInstance, user, context);
   };
 }
 
-export function nestToAuthFunction(
+export function nestToAuthFunction<
+  TClass extends new (...args: any[]) => any,
+  TMethodName extends keyof InstanceType<TClass>
+>(
   trigger: FanAuthTrigger,
   nestModule: any,
-  nestController: any,
-  handlerMethod: string
+  nestControllerOrService: TClass,
+  handlerMethod: TMethodName
 ) {
-  const handler = nestToAuthHandler(nestModule, nestController, handlerMethod);
+  const handler = nestToAuthHandler(
+    nestModule,
+    nestControllerOrService,
+    handlerMethod
+  );
   if (trigger === 'create') {
     return auth.user().onCreate(handler);
   }
@@ -36,16 +48,19 @@ export function nestToAuthFunction(
   return auth.user().onDelete(handler);
 }
 
-export function FanAuth(
+export function FanAuth<
+  TClass extends new (...args: any[]) => any,
+  TMethodName extends keyof InstanceType<TClass>
+>(
   trigger: FanAuthTrigger,
-  nestController: any,
-  handlerMethod: string
+  nestControllerOrService: TClass,
+  handlerMethod: TMethodName
 ): ClassDecorator {
   return (nestModule: object) =>
     nestToAuthFunction(
       trigger,
       nestModule,
-      nestController,
+      nestControllerOrService,
       handlerMethod
     ) as any;
 }
