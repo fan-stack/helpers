@@ -1,23 +1,34 @@
+import { NestFactory } from '@nestjs/core';
 import { auth, EventContext } from 'firebase-functions';
 
 export type FanAuthTrigger = 'create' | 'delete';
 
-export interface IFanAuthHandler<T = any> {
-  handler: (user: auth.UserRecord, context: EventContext) => PromiseLike<T>;
+type AuthHandler<T = any> = (
+  user: auth.UserRecord,
+  context: EventContext
+) => PromiseLike<T>;
+
+export function nestToAuthHandler(
+  nestModule: any,
+  nestController: any,
+  handlerMethod: string
+): AuthHandler {
+  return async (user: auth.UserRecord, context: EventContext) => {
+    const nestApp = await NestFactory.createApplicationContext(nestModule);
+    const controllerInstance = nestApp.get(nestController);
+    const handler: AuthHandler = controllerInstance[handlerMethod];
+
+    return handler.call(controllerInstance, user, context);
+  };
 }
 
-export function controllerToAuthHandler<T = any>(controller: object) {
-  const classifiedController = controller as new () => IFanAuthHandler;
-  const controllerInstance: IFanAuthHandler<T> = new classifiedController();
-
-  return controllerInstance.handler;
-}
-
-export function controllerToAuthFunction(
+export function nestToAuthFunction(
   trigger: FanAuthTrigger,
-  target: object
+  nestModule: any,
+  nestController: any,
+  handlerMethod: string
 ) {
-  const handler = controllerToAuthHandler(target);
+  const handler = nestToAuthHandler(nestModule, nestController, handlerMethod);
   if (trigger === 'create') {
     return auth.user().onCreate(handler);
   }
@@ -25,6 +36,16 @@ export function controllerToAuthFunction(
   return auth.user().onDelete(handler);
 }
 
-export function FanAuth(trigger: FanAuthTrigger): ClassDecorator {
-  return (target: object) => controllerToAuthFunction(trigger, target) as any;
+export function FanAuth(
+  trigger: FanAuthTrigger,
+  nestController: any,
+  handlerMethod: string
+): ClassDecorator {
+  return (nestModule: object) =>
+    nestToAuthFunction(
+      trigger,
+      nestModule,
+      nestController,
+      handlerMethod
+    ) as any;
 }
