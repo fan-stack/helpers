@@ -9,7 +9,7 @@ import { NestFactory } from '@nestjs/core';
 import * as express from 'express';
 import { https } from 'firebase-functions';
 
-export interface IGlobalOptions<T = any> {
+export interface IFanHttpGlobalOptions<T = any> {
   prefix?: string;
   filters?: ExceptionFilter[];
   guards?: CanActivate[];
@@ -17,7 +17,9 @@ export interface IGlobalOptions<T = any> {
   pipes?: Array<PipeTransform<T>>;
 }
 
-const defaultOptions: IGlobalOptions = {
+export type IGlobalOptions<T = any> = IFanHttpGlobalOptions<T>;
+
+const defaultOptions: IFanHttpGlobalOptions = {
   filters: [],
   guards: [],
   interceptors: [],
@@ -36,7 +38,7 @@ const defaultOptions: IGlobalOptions = {
  */
 export function nestToFirebase<T = any>(
   nestModule: any,
-  options: IGlobalOptions<T> = defaultOptions
+  options: IFanHttpGlobalOptions<T> = defaultOptions
 ) {
   return async (req: express.Request, res: express.Response) => {
     const expressInstance = express();
@@ -75,7 +77,7 @@ export function nestToFirebase<T = any>(
  */
 export function nestToFirebaseHandler<T = any>(
   nestModule: any,
-  options: IGlobalOptions<T> = defaultOptions
+  options: IFanHttpGlobalOptions<T> = defaultOptions
 ) {
   return nestToFirebase(nestModule, options);
 }
@@ -91,7 +93,7 @@ export function nestToFirebaseHandler<T = any>(
  */
 export function nestToFirebaseFunction<T = any>(
   nestModule: any,
-  options: IGlobalOptions<T> = defaultOptions
+  options: IFanHttpGlobalOptions<T> = defaultOptions
 ) {
   return https.onRequest(nestToFirebaseHandler(nestModule, options));
 }
@@ -119,7 +121,7 @@ export class UsersModule {}
    ```
  */
 export function FanHttp<T = any>(
-  options: IGlobalOptions<T> = defaultOptions
+  options: IFanHttpGlobalOptions<T> = defaultOptions
 ): ClassDecorator {
   return (target: object) => nestToFirebaseFunction(target, options) as any;
 }
