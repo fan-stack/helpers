@@ -3,7 +3,8 @@
   "extends": ["tslint:recommended"],
   "jsRules": {},
   "rules": {
-    "quotemark": false
+    "quotemark": false,
+    "trailing-comma": false
   },
   "rulesDirectory": []
 }
