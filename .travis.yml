@@ -2,22 +2,19 @@ if: commit_message !~ /^(docs|style|chore)(\(.*\))?:/
 
 language: node_js
 
-cache:
-  directories:
-    - ~/.npm
+cache: yarn
 
 node_js:
-  - 8
-  - 10
+  - 8.15.0
 
 branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+  only:
+    - master
 
 jobs:
   include:
     - stage: release
-      node_js: lts/*
+      node_js: 8.15.0
       script: skip
       deploy:
         provider: script
