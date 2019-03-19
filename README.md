@@ -25,37 +25,50 @@
 
 `pnpm i @fan-stack/helpers`
 
-## Single Function
+## HTTPS Functions
+
+### Single Function
 
 Replace NestJS main.ts file with the following
 
 ```ts
-import { https } from 'firebase-functions';
-import { nestToFirebase } from '@fan-stack/helpers';
+import { nestToFirebaseFunction } from '@fan-stack/helpers';
 import { AppModule } from './app.module';
 
-export const api = https.onRequest(nestToFirebase(AppModule));
+export const api = nestToFirebaseFunction(AppModule);
 ```
 
 If you run `firebase serve --only functions`(after building the project) you will see the function is up and running.
 
-## Multiple functions
+### Multiple functions
 
 Having only one function for all the endpoints may not be the best approach for you, to solve that, the only thing you need to do is to export a new function using a different module. Because the AppModule is normally the one with everything, you would normally not use it when exporting multiple functions:
 
+## Auth Functions
+
+For auth trigger functions, you need to specify what trigger you want to use, either 'create' or 'delete', then the module, and the service and the method that should behave like the function.
+
 ```ts
-import { https } from 'firebase-functions';
-import { nestToFirebase } from '@fan-stack/helpers';
-import { AccountModule } from './account/account.module';
-import { ReviewsModule } from './reviews/reviews.module';
-import { RestaurantsModule } from './restaurants/restaurants.module';
+import { nestToAuthFunction } from '@fan-stack/helpers';
+import { AccountModule } from './app.module';
+import { AccountService } from './app.service';
 
-export const account = https.onRequest(nestToFirebase(AccountModule));
-export const reviews = https.onRequest(nestToFirebase(ReviewsModule));
-export const restaurants = https.onRequest(nestToFirebase(RestaurantsModule));
+// onCreate
+export const onCreateUser = nestToAuthFunction(
+  'create',
+  AccountModule,
+  AccountService,
+  'onCreateUser'
+);
+
+// onDelete
+export const onDeleteUser = nestToAuthFunction(
+  'delete',
+  AccountModule,
+  AccountService,
+  'onDeleteUser'
+);
 ```
-
-This would create 3 different function instances where you can set the timeout, memory and any other configuration for each function in case you need to.
 
 # Firebase configuration
 
