@@ -21,7 +21,8 @@
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "yarn lint",
     "build": "tsc",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "release": "yarn build && yarn semantic-release"
   },
   "devDependencies": {
     "@nestjs/common": "^5.0.0",
