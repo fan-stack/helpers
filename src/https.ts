@@ -62,7 +62,8 @@ export function nestToFirebase<T = any>(
       nestApp.useGlobalPipes(...options.pipes);
     }
     await nestApp.init();
-    expressInstance(req, res);
+    await expressInstance(req, res);
+    await nestApp.close();
   };
 }
 
